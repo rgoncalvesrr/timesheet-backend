@@ -3,6 +3,8 @@ using Timesheet.Api.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddVersioning();
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -14,11 +16,12 @@ app.UseApiDocumentation();
 app.UseHttpsRedirection();
 
 app.MapGet("/",
-        () => new HealthCheck(Timestamp: DateTime.UtcNow.ToLocalTime()))
+        () => Results.Ok(new HealthCheck(Timestamp: DateTime.UtcNow.ToLocalTime())))
     .WithName("GetHealth")
     .WithSummary("Obtém status da API")
     .WithDescription("Verificação de estado da API")
-    .Produces<HealthCheck>(StatusCodes.Status200OK, contentType: "application/json");
+    .Produces<HealthCheck>(StatusCodes.Status200OK, contentType: "application/json")
+    .Produces(StatusCodes.Status404NotFound);
 
 app.Run();
 
